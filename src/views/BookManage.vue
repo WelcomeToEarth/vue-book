@@ -48,7 +48,7 @@
                     label="操作"
                     width="100">
                 <template slot-scope="book">
-                    <el-button @click="deleteBook(book)" type="text" size="small">删除</el-button>
+                    <el-button @click="deleteBook(book.row)" type="text" size="small">删除</el-button>
                     <el-button @click="dialogVisible=true" type="text" size="small">编辑</el-button>
                 </template>
             </el-table-column>
@@ -79,8 +79,8 @@
             deleteBook(book){
                 // let index=this.books.findIndex(item=>item.id==book.id)
                 // this.books.splice(index,1)
-                window.console.log(book.$index)
-                let id = book.$index
+                window.console.log(book._id)
+                let id = book._id
                 let url = 'http://localhost:3000/book/delete' + '/' + id
                 fetch(url,{method: 'DELETE'})
                     .then(res=>res.json())
