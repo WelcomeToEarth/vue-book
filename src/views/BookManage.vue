@@ -30,7 +30,7 @@
                 :data="books"
                 style="width: 80%">
             <el-table-column
-                    prop="id"
+                    prop="_id"
                     label="ID"
                     width="180">
             </el-table-column>
@@ -60,7 +60,7 @@
 </template>
 
 <script>
-    import _ from 'lodash'
+    // import _ from 'lodash'
     export default {
         name: "BookManger",
         data(){
@@ -72,15 +72,50 @@
                     {id:2,name:"book2",price:230}]
             }
         },
+        mounted() {
+            this.getBookList()
+        },
         methods:{
             deleteBook(book){
-                let index=this.books.findIndex(item=>item.id==book.id)
-                this.books.splice(index,1)
+                // let index=this.books.findIndex(item=>item.id==book.id)
+                // this.books.splice(index,1)
+                window.console.log(book.$index)
+                let id = book.$index
+                let url = 'http://localhost:3000/book/delete' + '/' + id
+                fetch(url,{method: 'DELETE'})
+                    .then(res=>res.json())
+                    .then(()=>{
+                        let index = this.books.findIndex((item)=>{
+                            return item._id == id
+                        })
+                        this.books.splice(index,1)
+                    })
             },
             addBook(){
-                this.book.id=++this.maxId
-                let bk=_.cloneDeep(this.book)
-                this.books.push(bk)
+                // this.book.id=++this.maxId
+                // let bk=_.cloneDeep(this.book)
+                // this.books.push(bk)
+                let url = 'http://localhost:3000/book/add'
+                let options = {
+                    method: 'POST',//post请求 
+                    headers: { 
+                        'Accept': 'application/json', 
+                        'Content-Type': 'application/json' 
+                    }, 
+                    body: JSON.stringify(this.book) 
+                }
+                fetch(url,options)
+                    .then(res=>res.json())
+                    .then(us=> this.books.push(us))
+            },
+            handleClose(){
+
+            },
+            getBookList(){
+                let url = 'http://localhost:3000/book/list'
+                fetch(url,{type:"GET"})
+                    .then(res=>res.json())
+                    .then(us=> this.books=us.data)
             }
         },
         computed:{
